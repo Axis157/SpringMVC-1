@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+    id 'war'
+    id 'application'
+}
+group = 'ru.gurtovenko'
+version = ''
+sourceCompatibility = '1.8'
+//mainClassName = 'ru.gurtovenko.Main'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+war {
+    baseName = 'ROOT'
+}
+
+dependencies {
+// https://mvnrepository.com/artifact/javax.servlet/java..
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+// https://mvnrepository.com/artifact/org.thymeleaf/thym..
+    compile group: 'org.thymeleaf', name: 'thymeleaf-spring5', version: '3.0.11.RELEASE'
+// https://mvnrepository.com/artifact/org.springframewor..
+    compile group: 'org.springframework', name: 'spring-webmvc', version: '5.2.5.RELEASE'
+// https://mvnrepository.com/artifact/org.springframewor..
+    compile group: 'org.springframework', name: 'spring-web', version: '5.2.5.RELEASE'
+// https://mvnrepository.com/artifact/org.springframewor..
+    compile group: 'org.springframework', name: 'spring-context', version: '5.2.5.RELEASE'
+// https://mvnrepository.com/artifact/org.springframewor..
+    compile group: 'org.springframework', name: 'spring-core', version: '5.2.5.RELEASE'
+    // https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator
+    compile group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.1.4.Final'
+    // https://mvnrepository.com/artifact/com.h2database/h2
+    compile group: 'com.h2database', name: 'h2', version: '1.4.200'
+    // https://mvnrepository.com/artifact/org.postgresql/postgresql
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.12'
+
+}
