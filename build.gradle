@@ -6,7 +6,7 @@ plugins {
 group = 'ru.gurtovenko'
 version = ''
 sourceCompatibility = '1.8'
-//mainClassName = 'ru.gurtovenko.Main'
+mainClassName = 'ru.gurtovenko.Main'
 
 repositories {
     mavenCentral()
@@ -34,6 +34,7 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-context', version: '5.2.5.RELEASE'
 // https://mvnrepository.com/artifact/org.springframewor..
     compile group: 'org.springframework', name: 'spring-core', version: '5.2.5.RELEASE'
+    compile group: 'org.springframework', name: 'spring-jdbc', version: '5.2.5.RELEASE'
     // https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator
     compile group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.1.4.Final'
     // https://mvnrepository.com/artifact/com.h2database/h2

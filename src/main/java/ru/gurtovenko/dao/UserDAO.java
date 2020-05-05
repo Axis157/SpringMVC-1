@@ -1,87 +1,46 @@
 package ru.gurtovenko.dao;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.graalvm.compiler.lir.LIRInstruction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.gurtovenko.model.User;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.*;
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Properties;
 
 @Component
 public class UserDAO {
 
-    private static Connection conn;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
-
-    static{
-        String url = null;
-        String username = null;
-        String password = null;
-        String DB_Driver = null;
-
-        //load db properties
-        try(InputStream in = UserDAO.class.
-                getClassLoader().getResourceAsStream("persistence.properties")){
-            Properties properties = new Properties();
-            properties.load(in);
-            url = properties.getProperty("url");
-            username = properties.getProperty("username");
-            password = properties.getProperty("password");
-            DB_Driver = properties.getProperty("driver");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        //acquire db connection
-        try {
-            Class.forName(DB_Driver);
-            conn = DriverManager.getConnection(url, username, password);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public List<User> getAll() throws SQLException {
-        List<User> users = new ArrayList<>();
-        PreparedStatement ps = conn.prepareStatement("SELECT * FROM public.users");
-
-        ResultSet rs = ps.executeQuery();
-        while(rs.next()){
-            User user = new User();
-            user.setName(rs.getString(1));
-            user.setSurname(rs.getString(2));
-            user.setEmail(rs.getString(3));
-            users.add(user);
-        }
-        return users;
+    public List<User> getAll() {
+        return jdbcTemplate.query("select * from users",
+                new BeanPropertyRowMapper<>(User.class));
+//        return jdbcTemplate.query("select * from users", (rs, rowNum) -> {
+//            User user = new User();
+//            user.setName(rs.getString(1));
+//            user.setSurname(rs.getString(2));
+//            user.setEmail(rs.getString(3));
+//            return user;
+//        });
     }
 
     public User getOne(String email) {
         try{
-            PreparedStatement ps = conn.prepareStatement("select * from users where email = ?");
-            ps.setString(1,email);
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()){
-                User user = new User();
-                user.setName(rs.getString(1));
-                user.setSurname(rs.getString(2));
-                user.setEmail(rs.getString(3));
-                return user;
-            }
-        } catch (SQLException throwables) {}
-        return null;
+            return jdbcTemplate.queryForObject("select * from users where email = ?",
+                    new Object[] { email },
+                    new BeanPropertyRowMapper<>(User.class));
+        }
+        catch (Exception e){
+            return null;
+        }
     }
 
     public void add(User user) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("insert into users values(?,?,?)");
-        ps.setString(1,user.getName());
-        ps.setString(2,user.getSurname());
-        ps.setString(3,user.getEmail());
-        ps.execute();
+        jdbcTemplate.update("insert into users values(?,?,?)",
+                user.getName(), user.getSurname(), user.getEmail());
     }
 }
