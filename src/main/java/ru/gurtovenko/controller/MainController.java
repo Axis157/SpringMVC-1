@@ -2,7 +2,6 @@ package ru.gurtovenko.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,12 +15,12 @@ import ru.gurtovenko.util.UserValidator;
 
 import javax.validation.Valid;
 import java.sql.SQLException;
-import java.util.List;
 
 @Controller
 public class MainController {
 
     @Autowired
+    @Qualifier("jdbcTemplateUserDAO")
     private UserDAO userDAO;
 
     @Autowired
