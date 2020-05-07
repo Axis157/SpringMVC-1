@@ -12,7 +12,7 @@ import ru.gurtovenko.model.User;
 public class UserValidator implements Validator {
 
     @Autowired
-    @Qualifier("jdbcTemplateUserDAO")
+    @Qualifier("jpaUserDAO")
     private UserDAO userDAO;
 
     @Override

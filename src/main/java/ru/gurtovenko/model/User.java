@@ -1,8 +1,24 @@
 package ru.gurtovenko.model;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
+@Entity
+@Table(name = "users")
 public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @NotBlank(message = "Not required")
     private String name;
     @NotBlank

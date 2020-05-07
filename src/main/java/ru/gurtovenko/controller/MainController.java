@@ -20,7 +20,7 @@ import java.sql.SQLException;
 public class MainController {
 
     @Autowired
-    @Qualifier("jdbcTemplateUserDAO")
+    @Qualifier("jpaUserDAO")
     private UserDAO userDAO;
 
     @Autowired

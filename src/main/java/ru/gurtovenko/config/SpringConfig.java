@@ -1,5 +1,6 @@
 package ru.gurtovenko.config;
 
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -10,6 +11,12 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
@@ -18,12 +25,14 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan("ru.gurtovenko")
 @EnableWebMvc
 @PropertySource("classpath:persistence.properties")
+@EnableTransactionManagement
 public class SpringConfig implements WebMvcConfigurer {
     private final ApplicationContext applicationContext;
 
@@ -115,4 +124,32 @@ public class SpringConfig implements WebMvcConfigurer {
         return new JdbcTemplate(dataSource());
     }
 
+    @Bean
+    public LocalSessionFactoryBean sessionFactory() {
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource());
+        sessionFactory.setPackagesToScan(
+                new String[] { "ru.gurtovenko.model" });
+
+        return sessionFactory;
+    }
+
+    //Jpa config
+    @Bean
+    public LocalContainerEntityManagerFactoryBean emf() {
+        LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
+        emf.setDataSource(dataSource());
+        emf.setPackagesToScan(
+                new String[] { "ru.gurtovenko.model" });
+        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        emf.setJpaVendorAdapter(vendorAdapter);
+        return emf;
+    }
+
+    @Bean
+    public JpaTransactionManager jpaTransactionManager(){
+        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
+        jpaTransactionManager.setEntityManagerFactory(emf().getObject());
+        return jpaTransactionManager;
+    }
 }
