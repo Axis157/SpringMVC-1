@@ -1,6 +1,9 @@
 package ru.gurtovenko.model;
 
+import org.hibernate.annotations.NotFound;
+
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Entity
@@ -11,19 +14,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     @NotBlank(message = "Not required")
     private String name;
+
     @NotBlank
     private String surname;
-    @NotBlank
+    @Email
     private String email;
 
     public User(String name, String surname, String email) {
@@ -33,6 +29,14 @@ public class User {
     }
 
     public User() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setName(String login) {
