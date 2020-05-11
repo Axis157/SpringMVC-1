@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import ru.gurtovenko.dao.UserDAO;
 import ru.gurtovenko.model.User;
+import ru.gurtovenko.service.UserService;
 import ru.gurtovenko.util.UserValidator;
 
 import javax.validation.Valid;
@@ -20,8 +21,7 @@ import java.sql.SQLException;
 public class MainController {
 
     @Autowired
-    @Qualifier("jpaUserDAO")
-    private UserDAO userDAO;
+    private UserService userService;
 
     @Autowired
     private UserValidator userValidator;
@@ -34,7 +34,7 @@ public class MainController {
 
     @GetMapping("/users")
     public String getUsers(Model model) {
-        model.addAttribute("users", userDAO.getAll());
+        model.addAttribute("users", userService.getAll());
         return "/users";
     }
 
@@ -51,7 +51,7 @@ public class MainController {
             return "/AnimatedLogin";
         }
         else{
-            userDAO.add(user);
+            userService.add(user);
             return "redirect:/users";
         }
     }

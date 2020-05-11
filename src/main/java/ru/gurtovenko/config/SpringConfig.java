@@ -9,6 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -33,6 +35,7 @@ import javax.sql.DataSource;
 @EnableWebMvc
 @PropertySource("classpath:persistence.properties")
 @EnableTransactionManagement
+@EnableJpaRepositories("ru.gurtovenko.repository")
 public class SpringConfig implements WebMvcConfigurer {
     private final ApplicationContext applicationContext;
 
@@ -136,20 +139,26 @@ public class SpringConfig implements WebMvcConfigurer {
 
     //Jpa config
     @Bean
-    public LocalContainerEntityManagerFactoryBean emf() {
-        LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
-        emf.setDataSource(dataSource());
-        emf.setPackagesToScan(
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
+        entityManagerFactory.setDataSource(dataSource());
+        entityManagerFactory.setPackagesToScan(
                 new String[] { "ru.gurtovenko.model" });
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        emf.setJpaVendorAdapter(vendorAdapter);
-        return emf;
+        entityManagerFactory.setJpaVendorAdapter(vendorAdapter);
+        return entityManagerFactory;
     }
 
     @Bean
-    public JpaTransactionManager jpaTransactionManager(){
+    public JpaTransactionManager transactionManager(){
         JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
-        jpaTransactionManager.setEntityManagerFactory(emf().getObject());
+        jpaTransactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
         return jpaTransactionManager;
+    }
+
+    @Bean
+    PersistenceExceptionTranslationPostProcessor petpp(){
+        PersistenceExceptionTranslationPostProcessor petpp = new PersistenceExceptionTranslationPostProcessor();
+        return petpp;
     }
 }
