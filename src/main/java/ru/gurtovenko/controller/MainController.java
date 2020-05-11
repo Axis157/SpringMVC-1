@@ -47,12 +47,10 @@ public class MainController {
     @PostMapping("/users/new")
     public String signUp(@ModelAttribute @Valid User user, BindingResult result) throws SQLException {
         userValidator.validate(user, result);
-        if(result.hasErrors()){
-            return "/AnimatedLogin";
+        if (result.hasErrors()) {
+            return "AnimatedLogin";
         }
-        else{
-            userService.add(user);
-            return "redirect:/users";
-        }
+        userService.add(user);
+        return "redirect:/users";
     }
 }
